@@ -2,20 +2,19 @@ extends CharacterBody2D
 
 const MAX_SPEED = 200
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+var click_position = Vector2()
+var target_position = Vector2()
+
+func _ready() -> void:
+	click_position = position
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	var direction = get_movement_vector().normalized()
-	velocity = direction * MAX_SPEED
-	move_and_slide()
-	
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("left_click"):
+		click_position = get_global_mouse_position()
 
-
-func get_movement_vector():
-	var x_movement = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
-	var y_movement = Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
-	return Vector2(x_movement, y_movement)
+	if position.distance_to(click_position) > 3:
+		target_position = (click_position - position).normalized()
+		velocity = target_position * MAX_SPEED
+		move_and_slide()
